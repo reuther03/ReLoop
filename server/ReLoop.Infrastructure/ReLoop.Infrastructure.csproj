@@ -4,11 +4,11 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>ReLoop.Api.Domain</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\shared\ReLoop.Shared.Abstractions\ReLoop.Shared.Abstractions.csproj" />
+      <ProjectReference Include="..\..\shared\ReLoop.Shared.Infrastructure\ReLoop.Shared.Infrastructure.csproj" />
+      <ProjectReference Include="..\ReLoop.Application\ReLoop.Application.csproj" />
     </ItemGroup>
 
 </Project>
