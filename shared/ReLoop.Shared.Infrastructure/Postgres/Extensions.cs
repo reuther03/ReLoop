@@ -2,9 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ReLoop.Shared.Abstractions.Kernel.Database;
-using ReLoop.Shared.Abstractions.QueriesAndCommands.Commands;
-using ReLoop.Shared.Abstractions.QueriesAndCommands.Queries;
-using ReLoop.Shared.Infrastructure.Postgres.Decorators;
 
 namespace ReLoop.Shared.Infrastructure.Postgres;
 

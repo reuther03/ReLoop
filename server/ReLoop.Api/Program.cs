@@ -9,23 +9,15 @@ builder.Configuration.AddUserSecrets<Program>();
 var services = builder.Services;
 var configuration = builder.Configuration;
 
-services.AddDomain()
-    .AddApplication()
-    .AddInfrastructure()
-    .AddSharedInfrastructure(configuration);
-
-
 services.AddEndpointsApiExplorer();
 
+services.AddDomain()
+    .AddApplication()
+    .AddInfrastructure(configuration)
+    .AddSharedInfrastructure(configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
 app.UseInfrastructure();
-
 
 await app.RunAsync();

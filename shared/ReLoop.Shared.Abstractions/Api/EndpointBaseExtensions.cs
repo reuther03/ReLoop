@@ -1,8 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Text;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+﻿using System.Text;
 
 namespace ReLoop.Shared.Abstractions.Api;
 

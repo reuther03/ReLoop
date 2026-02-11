@@ -25,10 +25,10 @@ public class User : AggregateRoot<UserId>
         Role = role;
     }
 
-    public static User CreateUser(UserId id, Email email, Name firstName, Name lastName, Password password)
-        => new(id, email, firstName, lastName, password, Role.User);
+    public static User CreateUser(Email email, Name firstName, Name lastName, Password password)
+        => new(Guid.NewGuid(), email, firstName, lastName, password, Role.User);
 
 
-    public static User CreateAdmin(UserId id, Email email, Name firstName, Name lastName, Password password) =>
-        new(id, email, firstName, lastName, password, Role.Admin);
+    public static User CreateAdmin(Email email, Name firstName, Name lastName, Password password) =>
+        new(Guid.NewGuid(), email, firstName, lastName, password, Role.Admin);
 }

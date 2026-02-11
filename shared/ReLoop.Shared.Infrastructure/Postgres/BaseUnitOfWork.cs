@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using ReLoop.Shared.Abstractions.Kernel.Database;
-using ReLoop.Shared.Abstractions.Kernel.Primitives;
 using ReLoop.Shared.Contracts.Result;
 
 namespace ReLoop.Shared.Infrastructure.Postgres;

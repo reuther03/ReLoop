@@ -11,8 +11,4 @@
       <ProjectReference Include="..\ReLoop.Application\ReLoop.Application.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Database\Configurations\" />
-    </ItemGroup>
-
 </Project>
