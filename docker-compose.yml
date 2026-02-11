@@ -1,0 +1,26 @@
+﻿version: '3.9'
+
+networks:
+  ReLoop.Network:
+    name: ReLoop.Network
+
+services:
+  ReLoop.postgres:
+    image: postgres:latest
+    container_name: ReLoop.Postgres
+    hostname: ReLoop.Postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - "5434:5434"
+    volumes:
+      - ./.container/postgres:/var/lib/postgresql
+      - ./.container/postgres:/var/log/postgresql
+    command: -p 5434
+    networks:
+      - ReLoop.Network
+
+volumes:
+  postgres:
+    driver: local

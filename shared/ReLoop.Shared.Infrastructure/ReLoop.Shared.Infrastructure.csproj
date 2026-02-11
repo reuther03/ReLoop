@@ -7,7 +7,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ReLoop.Shared.Abstractions\ReLoop.Shared.Abstractions.csproj" />
+        <ProjectReference Include="..\ReLoop.Shared.Abstractions\ReLoop.Shared.Abstractions.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.OpenApi" Version="2.3.9"/>
+        <PackageReference Include="Scrutor" Version="4.1.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.0.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.0.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0"/>
+        <PackageReference Include="Pgvector.EntityFrameworkCore" Version="0.2.2"/>
     </ItemGroup>
 
 </Project>

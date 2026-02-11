@@ -4,14 +4,23 @@
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>389c41d1-f81d-4253-a12d-4352241b81a8</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3"/>
+
+        <PackageReference Include="Microsoft.Build" Version="18.0.2"/>
+        <PackageReference Include="Microsoft.Build.Framework" Version="18.0.2"/>
+
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ReLoop.Infrastructure\ReLoop.Infrastructure.csproj" />
+        <ProjectReference Include="..\ReLoop.Infrastructure\ReLoop.Infrastructure.csproj"/>
     </ItemGroup>
 
 </Project>
