@@ -1,4 +1,4 @@
-﻿using ReLoop.Application.Abstractions.Repositories;
+using ReLoop.Application.Abstractions.Repositories;
 using ReLoop.Application.Features.Dtos;
 using ReLoop.Shared.Abstractions.QueriesAndCommands.Queries;
 using ReLoop.Shared.Abstractions.Services;
@@ -8,7 +8,7 @@ namespace ReLoop.Application.Features.Queries.GetUserItemsQuery;
 
 public record GetUserItems : IQuery<IEnumerable<ItemDto>>
 {
-    public sealed class Handler : IQueryHandler<GetItemsQuery.GetItemsQuery, IEnumerable<ItemDto>>
+    public sealed class Handler : IQueryHandler<GetUserItems, IEnumerable<ItemDto>>
     {
         private readonly IItemRepository _itemRepository;
         private readonly IUserService _userService;
@@ -19,7 +19,7 @@ public record GetUserItems : IQuery<IEnumerable<ItemDto>>
             _userService = userService;
         }
 
-        public async Task<Result<IEnumerable<ItemDto>>> Handle(GetItemsQuery.GetItemsQuery query, CancellationToken cancellationToken = default)
+        public async Task<Result<IEnumerable<ItemDto>>> Handle(GetUserItems query, CancellationToken cancellationToken = default)
         {
             var items = _userService.IsAuthenticated
                 ? await _itemRepository.GetItemsBySellerIdAsync(_userService.UserId.Value, cancellationToken)

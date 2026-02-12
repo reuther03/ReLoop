@@ -35,15 +35,9 @@ internal class ItemRepository : Repository<Item, ReLoopDbContext>, IItemReposito
             .OrderByDescending(i => i.CreatedAt)
             .ToListAsync(cancellationToken);
 
-    public async Task<IEnumerable<Item>> GetActiveItemsByCategoryAsync(ItemCategory category, CancellationToken cancellationToken = default)
-        => await _context.Items
-            .Include(i => i.Seller)
-            .Where(i => i.Status == ItemStatus.Active && i.Category == category)
-            .OrderByDescending(i => i.CreatedAt)
-            .ToListAsync(cancellationToken);
-
     public async Task<IEnumerable<Item>> GetItemsBySellerIdAsync(Guid sellerId, CancellationToken cancellationToken = default)
         => await _context.Items
+            .Include(i => i.Seller)
             .Include(i => i.Buyer)
             .Where(i => i.SellerId == UserId.From(sellerId))
             .OrderByDescending(i => i.CreatedAt)

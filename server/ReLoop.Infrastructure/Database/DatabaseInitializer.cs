@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ReLoop.Api.Domain.Item;
 using ReLoop.Api.Domain.User;
+using ReLoop.Shared.Abstractions.Kernel.ValueObjects;
 
 namespace ReLoop.Infrastructure.Database;
 
@@ -32,11 +33,13 @@ public class DatabaseInitializer : IHostedService
                 return;
 
             // Create admin
-            var admin = User.CreateAdmin("admin@reloop.com", "Admin", "User", "Admin123!");
+            // In a real application you should not hardcode admin credentials. This is just for demonstration purposes.
+            // Should be stored in user secrets or environment variables in production.
+            var admin = User.CreateAdmin("admin@reloop.com", "Admin", "User", Password.Create("Admin123!"));
 
             // Create users
-            var user1 = User.CreateUser("jan.kowalski@email.com", "Jan", "Kowalski", "User123!");
-            var user2 = User.CreateUser("anna.nowak@email.com", "Anna", "Nowak", "User123!");
+            var user1 = User.CreateUser("jan.kowalski@email.com", "Jan", "Kowalski", Password.Create("User123!"));
+            var user2 = User.CreateUser("anna.nowak@email.com", "Anna", "Nowak", Password.Create("User123!"));
 
             dbContext.Users.AddRange(admin, user1, user2);
             await dbContext.SaveChangesAsync(cancellationToken);
@@ -52,6 +55,12 @@ public class DatabaseInitializer : IHostedService
             {
                 Console.WriteLine($"Seed folder not found! Trying alternative path...");
                 seedPath = Path.GetFullPath(Path.Combine(currentDir, "..", "..", "seed"));
+                Console.WriteLine($"Trying: {seedPath}");
+            }
+
+            if (!Directory.Exists(seedPath))
+            {
+                seedPath = Path.Combine(currentDir, "seed");
                 Console.WriteLine($"Trying: {seedPath}");
             }
 
@@ -86,7 +95,8 @@ public class DatabaseInitializer : IHostedService
                     250m, ItemCategory.Electronics, user1.Id),
 
                 Item.Create("Metallica - Master of Puppets CD", "Original CD, collector's edition, mint condition",
-                    await File.ReadAllBytesAsync(Path.Combine(seedPath, "depositphotos_188822810-stock-photo-metallica-master-of-puppets-cd.jpg"), cancellationToken),
+                    await File.ReadAllBytesAsync(Path.Combine(seedPath, "depositphotos_188822810-stock-photo-metallica-master-of-puppets-cd.jpg"),
+                        cancellationToken),
                     45m, ItemCategory.Music, user2.Id),
 
                 Item.Create("George Orwell - 1984", "Classic dystopian novel, paperback, good condition",
