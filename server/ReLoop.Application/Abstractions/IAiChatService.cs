@@ -2,7 +2,7 @@
 
 namespace ReLoop.Application.Abstractions;
 
-public interface IAiChatService
+public interface IAiService
 {
     Task<AnalyzedImageTagResponse> GenerateTag(
         string? title,

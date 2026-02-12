@@ -7,12 +7,12 @@ using ReLoop.Application.Features.Dtos;
 
 namespace ReLoop.Infrastructure.Database.Services;
 
-public class AiChatService : IAiChatService
+public class AiService : IAiService
 {
     private readonly IChatCompletionService _chatCompletionService;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    public AiChatService(IChatCompletionService chatCompletionService)
+    public AiService(IChatCompletionService chatCompletionService)
     {
         _chatCompletionService = chatCompletionService;
         _jsonSerializerOptions = new JsonSerializerOptions

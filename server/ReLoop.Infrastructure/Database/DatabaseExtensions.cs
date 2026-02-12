@@ -15,7 +15,6 @@ public static class DatabaseExtensions
             .AddScoped<IReLoopDbContext, ReLoopDbContext>()
             .AddUnitOfWork<IUnitOfWork, UnitOfWork>();
 
-
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddHostedService<DatabaseInitializer>();

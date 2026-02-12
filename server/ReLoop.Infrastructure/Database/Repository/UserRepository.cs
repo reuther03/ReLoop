@@ -19,12 +19,9 @@ internal class UserRepository : Repository<User, ReLoopDbContext>, IUserReposito
     public async Task<bool> ExistsWithEmailAsync(string email, CancellationToken cancellationToken = default)
         => await _context.Users.AnyAsync(x => x.Email == email, cancellationToken);
 
-    public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
-        => _context.Users.FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
+        => await _context.Users.FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
 
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        var user = await _context.Users.FindAsync([UserId.From(id)], cancellationToken);
-        return user;
-    }
+        => await _context.Users.FindAsync([UserId.From(id)], cancellationToken);
 }

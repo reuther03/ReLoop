@@ -13,6 +13,16 @@ var configuration = builder.Configuration;
 
 services.AddEndpointsApiExplorer();
 
+services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:5151", "https://localhost:7161")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 services.AddDomain()
     .AddApplication()
     .AddInfrastructure(configuration)
@@ -20,6 +30,7 @@ services.AddDomain()
 
 var app = builder.Build();
 
+app.UseCors();
 app.UseInfrastructure();
 
 EndpointBase.MapEndpoints(app, Assembly.GetExecutingAssembly());

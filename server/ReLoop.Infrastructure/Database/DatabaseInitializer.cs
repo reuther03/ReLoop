@@ -31,8 +31,6 @@ public class DatabaseInitializer : IHostedService
             if (await dbContext.Users.AnyAsync(cancellationToken))
                 return;
 
-            Console.WriteLine("Seeding database...");
-
             // Create admin
             var admin = User.CreateAdmin("admin@reloop.com", "Admin", "User", "Admin123!");
 
@@ -44,7 +42,6 @@ public class DatabaseInitializer : IHostedService
             await dbContext.SaveChangesAsync(cancellationToken);
             Console.WriteLine("Users seeded successfully.");
 
-            // Seed images path - go up from server/ReLoop.Api to solution root/seed
             var currentDir = Directory.GetCurrentDirectory();
             Console.WriteLine($"Current directory: {currentDir}");
 
@@ -59,12 +56,7 @@ public class DatabaseInitializer : IHostedService
             }
 
             if (!Directory.Exists(seedPath))
-            {
-                Console.WriteLine($"Seed folder still not found. Skipping item seeding.");
                 return;
-            }
-
-            Console.WriteLine($"Seed folder found at: {seedPath}");
 
             // Create items
             var items = new List<Item>

@@ -1,6 +1,3 @@
 ﻿namespace ReLoop.Application.Abstractions;
 
-public interface IReLoopUnitOfWork
-{
-    
-}
+public interface IReLoopUnitOfWork;

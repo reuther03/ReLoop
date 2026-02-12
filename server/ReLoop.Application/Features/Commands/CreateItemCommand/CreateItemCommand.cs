@@ -18,18 +18,18 @@ public record CreateItemCommand(
     public sealed class Handler : ICommandHandler<CreateItemCommand, Guid>
     {
         private readonly IItemRepository _itemRepository;
-        private readonly IAiChatService _aiChatService;
+        private readonly IAiService _aiService;
         private readonly IUserService _userService;
         private readonly IUnitOfWork _unitOfWork;
 
         public Handler(
             IItemRepository itemRepository,
-            IAiChatService aiChatService,
+            IAiService aiService,
             IUserService userService,
             IUnitOfWork unitOfWork)
         {
             _itemRepository = itemRepository;
-            _aiChatService = aiChatService;
+            _aiService = aiService;
             _userService = userService;
             _unitOfWork = unitOfWork;
         }
@@ -47,8 +47,7 @@ public record CreateItemCommand(
             await command.Image.CopyToAsync(memoryStream, cancellationToken);
             var imageData = memoryStream.ToArray();
 
-            // Generate category using AI
-            var tagResponse = await _aiChatService.GenerateTag(
+            var tagResponse = await _aiService.GenerateTag(
                 command.Name,
                 command.Description,
                 imageData,

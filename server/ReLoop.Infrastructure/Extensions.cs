@@ -21,7 +21,7 @@ public static class Extensions
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IItemRepository, ItemRepository>();
-        services.AddScoped<IAiChatService, AiChatService>();
+        services.AddScoped<IAiService, AiService>();
 
         // Add Semantic Kernel with Gemini
         var apiKey = configuration["llm:gemini:apiKey"]!;
