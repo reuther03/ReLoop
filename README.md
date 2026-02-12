@@ -2,6 +2,8 @@
 
 Aplikacja marketplace do kupowania i sprzedawania przedmiotow z drugiej reki. Projekt wykorzystuje AI do automatycznej kategoryzacji wystawianych przedmiotow.
 
+**Repozytorium:** https://github.com/reuther03/ReLoop
+
 ## Wymagania
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
