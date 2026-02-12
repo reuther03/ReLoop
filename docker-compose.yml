@@ -1,14 +1,14 @@
-﻿version: '3.9'
+version: '3.9'
 
 networks:
-  ReLoop.Network:
-    name: ReLoop.Network
+  reloop-network:
+    name: reloop-network
 
 services:
-  ReLoop.postgres:
+  reloop-postgres:
     image: postgres:latest
-    container_name: ReLoop.Postgres
-    hostname: ReLoop.Postgres
+    container_name: reloop-postgres
+    hostname: reloop-postgres
     restart: unless-stopped
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
@@ -19,7 +19,42 @@ services:
       - ./.container/postgres:/var/log/postgresql
     command: -p 5434
     networks:
-      - ReLoop.Network
+      - reloop-network
+
+  reloop-api:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    container_name: reloop-api
+    restart: unless-stopped
+    ports:
+      - "5005:8080"
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - postgres__connectionString=Host=reloop-postgres;Port=5434;Database=ReLoop;Username=postgres;Password=
+      - jwt__issuer=ReLoop
+      - jwt__audience=ReLoop
+      - jwt__SecretKey=27D719E2-0077-4574-ACFC-063304D71D69
+      - jwt__expiry=12:00:00
+      - llm__gemini__apiKey=AIzaSyAQcJniqCgmQIlNbF8ffCk9hjSTZi5JK94
+      - llm__gemini__model=gemini-2.5-flash-lite
+    depends_on:
+      - reloop-postgres
+    networks:
+      - reloop-network
+
+  reloop-client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    container_name: reloop-client
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - reloop-api
+    networks:
+      - reloop-network
 
 volumes:
   postgres:
