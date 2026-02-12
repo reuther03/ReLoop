@@ -1,6 +1,8 @@
+using System.Reflection;
 using ReLoop.Api.Domain;
 using ReLoop.Application;
 using ReLoop.Infrastructure;
+using ReLoop.Shared.Abstractions.Api;
 using ReLoop.Shared.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,5 +21,7 @@ services.AddDomain()
 var app = builder.Build();
 
 app.UseInfrastructure();
+
+EndpointBase.MapEndpoints(app, Assembly.GetExecutingAssembly());
 
 await app.RunAsync();

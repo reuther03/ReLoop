@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ReLoop.Api.Domain.User;
 using ReLoop.Application.Abstractions;
 
 namespace ReLoop.Infrastructure.Database;
 
 public class ReLoopDbContext : DbContext, IReLoopDbContext
 {
-    // public DbSet<User> Users => Set<User>();
-    // public DbSet<CompetenceGroup> CompetencesGroups => Set<CompetenceGroup>();
-    // public DbSet<Matching> Matchings => Set<Matching>();
+    public DbSet<User> Users => Set<User>();
+
 
     public ReLoopDbContext(DbContextOptions<ReLoopDbContext> options) : base(options)
     {

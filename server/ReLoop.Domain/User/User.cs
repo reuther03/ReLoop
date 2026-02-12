@@ -11,6 +11,7 @@ public class User : AggregateRoot<UserId>
     public Name LastName { get; private set; }
     public Password Password { get; private set; }
     public Role Role { get; private set; }
+    public decimal Balance { get; private set; }
 
     protected User()
     {
@@ -23,6 +24,7 @@ public class User : AggregateRoot<UserId>
         LastName = lastName;
         Password = password;
         Role = role;
+        Balance = 500; // Initial balance for new users
     }
 
     public static User CreateUser(Email email, Name firstName, Name lastName, Password password)
@@ -31,4 +33,9 @@ public class User : AggregateRoot<UserId>
 
     public static User CreateAdmin(Email email, Name firstName, Name lastName, Password password) =>
         new(Guid.NewGuid(), email, firstName, lastName, password, Role.Admin);
+
+    public void UpdateBalance(decimal amount)
+    {
+        Balance += amount;
+    }
 }

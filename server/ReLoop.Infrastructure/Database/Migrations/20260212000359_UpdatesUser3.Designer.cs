@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ReLoop.Infrastructure.Database;
@@ -11,9 +12,11 @@ using ReLoop.Infrastructure.Database;
 namespace ReLoop.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(ReLoopDbContext))]
-    partial class ReLoopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260212000359_UpdatesUser3")]
+    partial class UpdatesUser3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,7 +64,7 @@ namespace ReLoop.Infrastructure.Database.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }
