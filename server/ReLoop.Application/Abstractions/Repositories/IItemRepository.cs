@@ -7,6 +7,7 @@ public interface IItemRepository : IRepository<Item>
 {
     Task<Item?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<IEnumerable<Item>> GetActiveItemsAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<Item>> GetActiveItemsExcludingSellerAsync(Guid excludeSellerId, CancellationToken cancellationToken = default);
     Task<IEnumerable<Item>> GetActiveItemsByCategoryAsync(ItemCategory category, CancellationToken cancellationToken = default);
     Task<IEnumerable<Item>> GetItemsBySellerIdAsync(Guid sellerId, CancellationToken cancellationToken = default);
 }
