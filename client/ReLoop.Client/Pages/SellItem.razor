@@ -1,0 +1,132 @@
+@page "/sell"
+@attribute [Authorize]
+@inject ItemService ItemService
+@inject NavigationManager Navigation
+@using ReLoop.Client.Models
+
+<PageTitle>Sell Item - ReLoop</PageTitle>
+
+<section class="sell-page">
+    <div class="sell-card">
+        <h1>Sell an Item</h1>
+        <p class="sell-subtitle">List your item on the marketplace</p>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-error">@errorMessage</div>
+        }
+        @if (!string.IsNullOrEmpty(successMessage))
+        {
+            <div class="alert alert-success">@successMessage</div>
+        }
+
+        <EditForm Model="model" OnValidSubmit="HandleSubmit" FormName="sell-item">
+            <DataAnnotationsValidator />
+
+            <div class="form-group">
+                <label for="name">Item Name</label>
+                <InputText id="name" class="form-control" @bind-Value="model.Name" placeholder="e.g. Vintage leather jacket" />
+                <ValidationMessage For="() => model.Name" />
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <InputTextArea id="description" class="form-control textarea" @bind-Value="model.Description" placeholder="Describe the item condition, size, etc." />
+                <ValidationMessage For="() => model.Description" />
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price ($)</label>
+                <InputNumber id="price" class="form-control" @bind-Value="model.Price" placeholder="0.00" />
+                <ValidationMessage For="() => model.Price" />
+            </div>
+
+            <div class="form-group">
+                <label>Image</label>
+                <div class="file-upload">
+                    <InputFile OnChange="HandleFileSelected" accept="image/*" />
+                    @if (selectedFileName is not null)
+                    {
+                        <p class="file-name">@selectedFileName</p>
+                    }
+                </div>
+                @if (imageRequired)
+                {
+                    <span class="validation-message">An image is required</span>
+                }
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg btn-full" disabled="@submitting">
+                @if (submitting)
+                {
+                    <span>Creating listing...</span>
+                }
+                else
+                {
+                    <span>List Item for Sale</span>
+                }
+            </button>
+        </EditForm>
+
+        @if (assignedCategory is not null)
+        {
+            <div class="category-result slide-up">
+                <p>AI assigned category:</p>
+                <span class="badge badge-category badge-lg">@assignedCategory</span>
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    private SellItemModel model = new();
+    private IBrowserFile? selectedFile;
+    private string? selectedFileName;
+    private bool submitting;
+    private bool imageRequired;
+    private string? errorMessage;
+    private string? successMessage;
+    private string? assignedCategory;
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+        selectedFileName = e.File.Name;
+        imageRequired = false;
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (selectedFile is null)
+        {
+            imageRequired = true;
+            return;
+        }
+
+        submitting = true;
+        errorMessage = null;
+        successMessage = null;
+        assignedCategory = null;
+
+        using var stream = selectedFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
+        var result = await ItemService.CreateItemAsync(model.Name, model.Description, model.Price, stream, selectedFile.Name);
+
+        if (result is { IsSuccess: true })
+        {
+            successMessage = "Item listed successfully!";
+
+            var items = await ItemService.GetItemsAsync();
+            var createdItem = items.FirstOrDefault(i => i.Id == result.Value);
+            assignedCategory = createdItem?.Category ?? "Categorized by AI";
+
+            await Task.Delay(2000);
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = result?.Message ?? "Failed to create listing.";
+        }
+
+        submitting = false;
+    }
+}

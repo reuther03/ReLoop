@@ -1,0 +1,62 @@
+@page "/my-items"
+@attribute [Authorize]
+@inject ItemService ItemService
+@inject NavigationManager Navigation
+
+<PageTitle>My Items - ReLoop</PageTitle>
+
+<section class="my-items-page">
+    <div class="page-header">
+        <h1>My Listed Items</h1>
+        <a href="/sell" class="btn btn-primary">+ List New Item</a>
+    </div>
+
+    @if (loading)
+    {
+        <div class="spinner"></div>
+    }
+    else if (items.Count == 0)
+    {
+        <div class="empty-state">
+            <h2>No items listed yet</h2>
+            <p class="text-muted">Start selling by listing your first item.</p>
+            <a href="/sell" class="btn btn-primary btn-lg">Sell an Item</a>
+        </div>
+    }
+    else
+    {
+        <div class="items-grid">
+            @foreach (var item in items)
+            {
+                <article class="my-item-card">
+                    <div class="card-image">
+                        <img src="@ItemService.GetImageUrl(item.Id)" alt="@item.Name" loading="lazy" />
+                        <span class="badge @(item.Status == "Sold" ? "badge-sold" : "badge-category")">@item.Status</span>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">@item.Name</h3>
+                        <p class="card-description">@item.Description</p>
+                        <div class="card-meta">
+                            <span class="badge badge-category">@item.Category</span>
+                            <span class="card-date">@item.CreatedAt.ToString("MMM dd, yyyy")</span>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-price">@item.Price.ToString("C2")</span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</section>
+
+@code {
+    private List<ItemDto> items = new();
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        items = await ItemService.GetUserItemsAsync();
+        loading = false;
+    }
+}

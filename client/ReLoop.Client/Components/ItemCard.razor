@@ -1,0 +1,24 @@
+@inject ItemService ItemService
+
+<article class="item-card" @onclick="() => OnClick.InvokeAsync(Item)">
+    <div class="card-image">
+        <img src="@ItemService.GetImageUrl(Item.Id)" alt="@Item.Name" loading="lazy" />
+        <span class="card-category badge badge-category">@Item.Category</span>
+    </div>
+    <div class="card-body">
+        <h3 class="card-title">@Item.Name</h3>
+        <p class="card-seller">by @Item.SellerName</p>
+        <div class="card-footer">
+            <span class="card-price">@Item.Price.ToString("C2")</span>
+            <span class="card-date">@Item.CreatedAt.ToString("MMM dd")</span>
+        </div>
+    </div>
+</article>
+
+@code {
+    [Parameter, EditorRequired]
+    public ItemDto Item { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<ItemDto> OnClick { get; set; }
+}

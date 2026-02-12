@@ -1,0 +1,101 @@
+@inject ItemService ItemService
+@inject AuthService AuthService
+
+@if (Item is not null)
+{
+    <div class="modal-overlay" @onclick="Close">
+        <div class="modal-content" @onclick:stopPropagation="true">
+            <button class="modal-close" @onclick="Close">&times;</button>
+
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img src="@ItemService.GetImageUrl(Item.Id)" alt="@Item.Name" />
+                </div>
+
+                <div class="modal-details">
+                    <span class="badge badge-category">@Item.Category</span>
+                    <h2>@Item.Name</h2>
+                    <p class="modal-seller">Sold by <strong>@Item.SellerName</strong></p>
+                    <p class="modal-description">@Item.Description</p>
+                    <p class="modal-price">@Item.Price.ToString("C2")</p>
+                    <p class="modal-date">Listed on @Item.CreatedAt.ToString("MMMM dd, yyyy")</p>
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-error">@errorMessage</div>
+                    }
+                    @if (!string.IsNullOrEmpty(successMessage))
+                    {
+                        <div class="alert alert-success">@successMessage</div>
+                    }
+
+                    <AuthorizeView>
+                        <Authorized>
+                            <button class="btn btn-primary btn-lg" @onclick="HandleBuy" disabled="@buying">
+                                @if (buying)
+                                {
+                                    <span>Buying...</span>
+                                }
+                                else
+                                {
+                                    <span>Buy Now</span>
+                                }
+                            </button>
+                        </Authorized>
+                        <NotAuthorized>
+                            <a href="/login" class="btn btn-primary btn-lg">Login to Buy</a>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public ItemDto? Item { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    [Parameter]
+    public EventCallback OnPurchased { get; set; }
+
+    private bool buying;
+    private string? errorMessage;
+    private string? successMessage;
+
+    private async Task HandleBuy()
+    {
+        if (Item is null) return;
+
+        buying = true;
+        errorMessage = null;
+        successMessage = null;
+
+        var result = await ItemService.BuyItemAsync(Item.Id);
+
+        if (result is { IsSuccess: true })
+        {
+            successMessage = "Item purchased successfully!";
+            AuthService.NotifyBalanceChanged();
+            await Task.Delay(1500);
+            await OnPurchased.InvokeAsync();
+            await Close();
+        }
+        else
+        {
+            errorMessage = result?.Message ?? "Failed to purchase item.";
+        }
+
+        buying = false;
+    }
+
+    private async Task Close()
+    {
+        errorMessage = null;
+        successMessage = null;
+        await OnClose.InvokeAsync();
+    }
+}

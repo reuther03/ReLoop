@@ -1,7 +1,101 @@
-﻿@page "/"
+@page "/"
+@inject ItemService ItemService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>ReLoop - Marketplace</PageTitle>
 
-<h1>Hello, world!</h1>
+<section class="hero">
+    <h1>Give items a second life</h1>
+    <p>Buy and sell pre-owned items in an eco-friendly marketplace.</p>
+</section>
 
-Welcome to your new app.
+<section class="marketplace">
+    <div class="marketplace-header">
+        <h2>Browse Items</h2>
+        <div class="category-filters">
+            <button class="filter-btn @(selectedCategory is null ? "active" : "")" @onclick="() => FilterByCategory(null)">
+                All
+            </button>
+            @foreach (var cat in categories)
+            {
+                <button class="filter-btn @(selectedCategory == cat ? "active" : "")" @onclick="() => FilterByCategory(cat)">
+                    @cat
+                </button>
+            }
+        </div>
+    </div>
+
+    @if (loading)
+    {
+        <div class="spinner"></div>
+    }
+    else if (filteredItems.Count == 0)
+    {
+        <div class="empty-state">
+            <p>No items found.</p>
+            <p class="text-muted">Check back later or try a different category.</p>
+        </div>
+    }
+    else
+    {
+        <div class="items-grid">
+            @foreach (var item in filteredItems)
+            {
+                <ItemCard Item="item" OnClick="ShowItemDetail" />
+            }
+        </div>
+    }
+</section>
+
+<ItemDetailModal Item="selectedItem" OnClose="CloseModal" OnPurchased="HandlePurchased" />
+
+@code {
+    private List<ItemDto> allItems = new();
+    private List<ItemDto> filteredItems = new();
+    private bool loading = true;
+    private ItemDto? selectedItem;
+    private string? selectedCategory;
+
+    private readonly string[] categories = { "Electronics", "Clothes", "Books", "Furniture", "Sports", "Games", "Music", "Toys", "Other" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadItems();
+    }
+
+    private async Task LoadItems()
+    {
+        loading = true;
+        allItems = await ItemService.GetItemsAsync();
+        ApplyFilter();
+        loading = false;
+    }
+
+    private void FilterByCategory(string? category)
+    {
+        selectedCategory = category;
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        filteredItems = selectedCategory is null
+            ? allItems.ToList()
+            : allItems.Where(i => i.Category.Equals(selectedCategory, StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
+    private void ShowItemDetail(ItemDto item)
+    {
+        selectedItem = item;
+    }
+
+    private void CloseModal()
+    {
+        selectedItem = null;
+    }
+
+    private async Task HandlePurchased()
+    {
+        selectedItem = null;
+        await LoadItems();
+    }
+}

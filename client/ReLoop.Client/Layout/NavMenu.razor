@@ -1,40 +1,110 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">ReLoop.Client</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+@implements IDisposable
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="nav-brand" href="">
+            <span class="brand-icon">&#x267B;</span> ReLoop
+        </a>
+
+        <button class="nav-toggle" @onclick="ToggleNavMenu" aria-label="Toggle navigation">
+            <span class="toggle-bar"></span>
+            <span class="toggle-bar"></span>
+            <span class="toggle-bar"></span>
+        </button>
+
+        <div class="nav-menu @(collapseNavMenu ? "" : "open")">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All" @onclick="CloseMenu">
+                Home
             </NavLink>
+
+            <AuthorizeView>
+                <Authorized>
+                    <NavLink class="nav-link" href="sell" @onclick="CloseMenu">
+                        Sell Item
+                    </NavLink>
+                    <NavLink class="nav-link" href="my-items" @onclick="CloseMenu">
+                        My Items
+                    </NavLink>
+                    <div class="nav-user">
+                        <span class="user-balance">$@balance.ToString("F2")</span>
+                        <button class="btn-add-money" @onclick="HandleAddMoney" disabled="@addingMoney" title="Add $100">+</button>
+                        <span class="user-email">@context.User.FindFirst("email")?.Value</span>
+                        <button class="btn btn-outline btn-sm" @onclick="HandleLogout">Logout</button>
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <NavLink class="nav-link" href="login" @onclick="CloseMenu">
+                        Login
+                    </NavLink>
+                    <NavLink class="nav-link" href="register" @onclick="CloseMenu">
+                        Register
+                    </NavLink>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
+    </div>
+</nav>
 
 @code {
     private bool collapseNavMenu = true;
+    private decimal balance;
+    private bool addingMoney;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    protected override async Task OnInitializedAsync()
+    {
+        AuthService.OnBalanceChanged += HandleBalanceChanged;
+        Navigation.LocationChanged += OnLocationChanged;
+        await LoadBalance();
+    }
+
+    private async void HandleBalanceChanged()
+    {
+        await LoadBalance();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        await LoadBalance();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadBalance()
+    {
+        var profile = await AuthService.GetProfileAsync();
+        balance = profile?.Balance ?? 0;
+    }
+
+    private async Task HandleAddMoney()
+    {
+        addingMoney = true;
+        await AuthService.AddBalanceAsync(100);
+        addingMoney = false;
+    }
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
     }
 
+    private void CloseMenu()
+    {
+        collapseNavMenu = true;
+    }
+
+    private async Task HandleLogout()
+    {
+        await AuthService.LogoutAsync();
+        balance = 0;
+        collapseNavMenu = true;
+        Navigation.NavigateTo("/");
+    }
+
+    public void Dispose()
+    {
+        AuthService.OnBalanceChanged -= HandleBalanceChanged;
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
 }
