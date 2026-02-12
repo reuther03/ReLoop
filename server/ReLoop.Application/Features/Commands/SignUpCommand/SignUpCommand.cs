@@ -27,12 +27,12 @@ public record SignUpCommand(
 
         public async Task<Result<Guid>> Handle(SignUpCommand command, CancellationToken cancellationToken)
         {
-            if (await  _userRepository.ExistsWithEmailAsync(command.Email, cancellationToken))
+            if (await _userRepository.ExistsWithEmailAsync(command.Email, cancellationToken))
                 return Result<Guid>.BadRequest("Email already exists.");
 
-            var identityUser = User.CreateUser(command.Email, command.FirstName, command.LastName, command.InputPassword);
+            var identityUser = User.CreateUser(command.Email, command.FirstName, command.LastName, Password.Create(command.InputPassword));
 
-            await  _userRepository.AddAsync(identityUser, cancellationToken);
+            await _userRepository.AddAsync(identityUser, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
 
             return Result.Ok(identityUser.Id.Value);

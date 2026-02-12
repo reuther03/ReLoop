@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ReLoop.Infrastructure.Database;
@@ -11,9 +12,11 @@ using ReLoop.Infrastructure.Database;
 namespace ReLoop.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(ReLoopDbContext))]
-    partial class ReLoopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260212002456_AddsItemEntity")]
+    partial class AddsItemEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,10 +33,6 @@ namespace ReLoop.Infrastructure.Database.Migrations
                     b.Property<Guid?>("BuyerId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -42,9 +41,10 @@ namespace ReLoop.Infrastructure.Database.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
-                    b.Property<byte[]>("ImageData")
+                    b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -64,15 +64,12 @@ namespace ReLoop.Infrastructure.Database.Migrations
                     b.Property<DateTime?>("SoldAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BuyerId");
-
-                    b.HasIndex("Category");
 
                     b.HasIndex("SellerId");
 
@@ -112,9 +109,8 @@ namespace ReLoop.Infrastructure.Database.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

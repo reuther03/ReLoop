@@ -38,6 +38,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(200);
 
         builder.Property(x => x.Role)
+            .HasConversion<string>()
             .IsRequired();
 
         builder.HasIndex(x => x.Email).IsUnique();
