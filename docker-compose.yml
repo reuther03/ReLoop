@@ -34,9 +34,7 @@ services:
       - postgres__connectionString=Host=reloop-postgres;Port=5434;Database=ReLoop;Username=postgres;Password=
       - jwt__issuer=ReLoop
       - jwt__audience=ReLoop
-      - jwt__SecretKey=27D719E2-0077-4574-ACFC-063304D71D69
       - jwt__expiry=12:00:00
-      - llm__gemini__apiKey=AIzaSyAQcJniqCgmQIlNbF8ffCk9hjSTZi5JK94
       - llm__gemini__model=gemini-2.5-flash-lite
     depends_on:
       - reloop-postgres
